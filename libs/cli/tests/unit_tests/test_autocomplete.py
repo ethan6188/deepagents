@@ -7,7 +7,6 @@ import pytest
 
 from deepagents_cli.command_registry import SLASH_COMMANDS
 from deepagents_cli.widgets.autocomplete import (
-    MAX_SUGGESTIONS,
     CompletionController,
     FuzzyFileController,
     MultiCompletionManager,
@@ -204,7 +203,21 @@ class TestSlashCommandController:
 
         mock_view.render_completion_suggestions.assert_called()
         suggestions = mock_view.render_completion_suggestions.call_args[0][0]
-        assert len(suggestions) == min(len(SLASH_COMMANDS), MAX_SUGGESTIONS)
+        assert len(suggestions) == len(SLASH_COMMANDS)
+
+    @pytest.mark.usefixtures("mock_view")
+    def test_arrow_keys_traverse_full_list(self, controller):
+        """Up/down arrow keys can reach every command in the list."""
+        controller.on_text_changed("/", 1)
+        total = len(SLASH_COMMANDS)
+        assert total > 10, "need >10 commands to verify no truncation"
+
+        visited: set[int] = {0}
+        for _ in range(total - 1):
+            controller._move_selection(1)
+            visited.add(controller._selected_index)
+
+        assert visited == set(range(total))
 
     def test_clears_on_no_match(self, controller, mock_view):
         """Clears suggestions when no commands match after having suggestions."""
@@ -235,7 +248,7 @@ class TestSlashCommandController:
         controller.on_text_changed("/", 1)
         mock_view.render_completion_suggestions.assert_called()
         suggestions = mock_view.render_completion_suggestions.call_args[0][0]
-        assert len(suggestions) == min(len(SLASH_COMMANDS), MAX_SUGGESTIONS)
+        assert len(suggestions) == len(SLASH_COMMANDS)
 
     def test_hidden_keyword_match_continue(self, controller, mock_view):
         """Typing 'continue' surfaces /threads via hidden keyword."""

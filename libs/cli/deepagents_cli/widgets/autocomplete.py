@@ -214,10 +214,10 @@ class SlashCommandController:
             return
 
         if not search:
-            # No search text — show all commands (display only cmd + desc)
-            suggestions = [(cmd, desc) for cmd, desc, _ in self._commands][
-                :MAX_SUGGESTIONS
-            ]
+            # No search text — show all commands so the user can browse
+            # the full list with arrow keys.  The CompletionPopup already
+            # constrains its height and scrolls, so no UI cap is needed.
+            suggestions = [(cmd, desc) for cmd, desc, _ in self._commands]
         else:
             # Score and filter commands using fuzzy matching
             scored = [
