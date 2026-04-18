@@ -6,14 +6,30 @@ from typing import Any
 
 from langchain.chat_models import init_chat_model
 from langchain_core.language_models import BaseChatModel
+from langchain_core.runnables import RunnableBinding, RunnableWithFallbacks
 
 from deepagents.profiles import _get_harness_profile
+
+# Wrappers around `BaseChatModel` produced by standard composition methods
+# such as `BaseChatModel.with_fallbacks(...)`, `.bind_tools(...)`, `.bind(...)`,
+# `.with_config(...)`, and `.with_retry(...)`. They are not subclasses of
+# `BaseChatModel` themselves but are accepted as the `model` argument by the
+# downstream `langchain.agents.create_agent` factory, so deepagents must
+# pass them through unchanged.
+_CHAT_MODEL_WRAPPERS: tuple[type, ...] = (RunnableBinding, RunnableWithFallbacks)
 
 
 def resolve_model(model: str | BaseChatModel) -> BaseChatModel:
     """Resolve a model string to a `BaseChatModel`.
 
     If `model` is already a `BaseChatModel`, returns it unchanged.
+
+    Standard chat-model composition wrappers (`RunnableBinding` from
+    `bind_tools()` / `bind()` / `with_config()` / `with_retry()`, and
+    `RunnableWithFallbacks` from `with_fallbacks()`) are also returned
+    unchanged. They wrap a `BaseChatModel` without subclassing it but are
+    accepted by the downstream `langchain.agents.create_agent` factory, so
+    they should pass through model resolution intact.
 
     String models are resolved via `init_chat_model`. OpenAI models
     (prefixed with `openai:`) default to the Responses API.
@@ -22,14 +38,24 @@ def resolve_model(model: str | BaseChatModel) -> BaseChatModel:
     via `OPENROUTER_APP_URL` / `OPENROUTER_APP_TITLE` env vars.
 
     Args:
-        model: Model string (e.g. `"openai:gpt-5.4"`) or pre-configured
-            `BaseChatModel` subclass instance.
+        model: Model string (e.g. `"openai:gpt-5.4"`), a pre-configured
+            `BaseChatModel` subclass instance, or a chat model wrapped via
+            `with_fallbacks()` / `bind_tools()` / `bind()` / `with_config()` /
+            `with_retry()`.
 
     Returns:
-        Resolved `BaseChatModel` instance.
+        Resolved chat model. For pre-built models and wrapped chat models the
+        input is returned unchanged; for string specs an instance produced by
+        `init_chat_model` is returned.
     """
     if isinstance(model, BaseChatModel):
         return model
+
+    # Passthrough for chat-model composition wrappers. These are not hashable
+    # (pydantic BaseModels), so any attempt to use them as a profile registry
+    # key below would raise `TypeError: unhashable type` (issue #2823).
+    if isinstance(model, _CHAT_MODEL_WRAPPERS):
+        return model  # type: ignore[return-value]
 
     profile = _get_harness_profile(model)
 

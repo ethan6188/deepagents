@@ -2,10 +2,14 @@
 
 import os
 from importlib.metadata import PackageNotFoundError
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import AIMessage, BaseMessage
+from langchain_core.outputs import ChatGeneration, ChatResult
 
 from deepagents._models import (
     _string_value,
@@ -35,12 +39,59 @@ def _make_model(dump: dict) -> MagicMock:
     return model
 
 
+class _FakeChatModel(BaseChatModel):
+    """Minimal `BaseChatModel` for tests that need a real instance.
+
+    Required to construct genuine `RunnableWithFallbacks` and `RunnableBinding`
+    wrappers via `with_fallbacks()` / `bind()`; `MagicMock(spec=BaseChatModel)`
+    does not survive the pydantic validation those methods perform.
+    """
+
+    @property
+    def _llm_type(self) -> str:
+        return "fake"
+
+    def _generate(
+        self,
+        messages: list[BaseMessage],
+        stop: list[str] | None = None,
+        run_manager: CallbackManagerForLLMRun | None = None,
+        **kwargs: Any,
+    ) -> ChatResult:
+        return ChatResult(generations=[ChatGeneration(message=AIMessage(content="ok"))])
+
+
 class TestResolveModel:
     """Tests for resolve_model."""
 
     def test_passthrough_when_already_model(self) -> None:
         model = MagicMock(spec=BaseChatModel)
         assert resolve_model(model) is model
+
+    def test_passthrough_for_runnable_with_fallbacks(self) -> None:
+        """Models wrapped via `with_fallbacks()` must not enter profile lookup.
+
+        `RunnableWithFallbacks` is not a `BaseChatModel` subclass and is not
+        hashable, so falling through to `_get_harness_profile()` would raise
+        `TypeError: unhashable type: 'RunnableWithFallbacks'` (issue #2823).
+        """
+        primary = _FakeChatModel()
+        wrapped = primary.with_fallbacks([_FakeChatModel()])
+        # Sanity check: the bug precondition still holds upstream.
+        with pytest.raises(TypeError):
+            hash(wrapped)
+        assert resolve_model(wrapped) is wrapped  # type: ignore[arg-type]
+
+    def test_passthrough_for_bound_chat_model(self) -> None:
+        """Models bound via `bind()` / `bind_tools()` / `with_config()` must passthrough.
+
+        `bind*` and `with_config` return a `RunnableBinding` (also a non-hashable
+        pydantic wrapper), and the same `_HARNESS_PROFILES.get()` failure mode
+        applies if the binding leaks past the early return in `resolve_model`.
+        """
+        primary = _FakeChatModel()
+        bound = primary.bind(stop=["END"])
+        assert resolve_model(bound) is bound  # type: ignore[arg-type]
 
     def test_openai_prefix_uses_responses_api(self) -> None:
         with patch("deepagents._models.init_chat_model") as mock:
