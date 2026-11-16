@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [0.0.9](https://github.com/ethan6188/deepagents/compare/langchain-modal==0.0.8...langchain-modal==0.0.9) (2026-11-16)
+
+
+### Bug Fixes
+
+* **modal:** handle per-file permission and directory errors ([#7241](https://github.com/ethan6188/deepagents/issues/7241)) ([841d737](https://github.com/ethan6188/deepagents/commit/841d737db72cd1549011426679a4c40aa26201d5))
+* **modal:** migrate `ModalSandbox` file I/O to `Sandbox.filesystem` API ([#7664](https://github.com/ethan6188/deepagents/issues/7664)) ([ee2f341](https://github.com/ethan6188/deepagents/commit/ee2f3413bf6d29a2d6e1defcf5e38bc0d681a334))
+
 ## [0.0.8](https://github.com/langchain-ai/deepagents/compare/langchain-modal==0.0.7...langchain-modal==0.0.8) (2026-11-13)
 
 ### Bug Fixes
