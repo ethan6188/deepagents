@@ -2,6 +2,54 @@
 
 # Deep Agents Changelog
 
+## [0.7.39](https://github.com/ethan6188/deepagents/compare/deepagents==0.7.38...deepagents==0.7.39) (2026-11-16)
+
+
+### Features
+
+* **sdk:** add `notify_parent` to `AsyncSubAgent` ([#7132](https://github.com/ethan6188/deepagents/issues/7132)) ([3ae25ff](https://github.com/ethan6188/deepagents/commit/3ae25ff85f94f15815c377e73841173a722299d6))
+* **sdk:** add `webhook` to `AsyncSubAgent` ([#7072](https://github.com/ethan6188/deepagents/issues/7072)) ([7a7c4e3](https://github.com/ethan6188/deepagents/commit/7a7c4e3708981568f96eb7fbc86aaef696c03001))
+* **sdk:** add notification metadata to async subagent notifications ([#7334](https://github.com/ethan6188/deepagents/issues/7334)) ([6b9e9c9](https://github.com/ethan6188/deepagents/commit/6b9e9c9f9088deab6d1c3f12c3c9626605d803a2))
+* **sdk:** expose execution output retention metadata ([#6876](https://github.com/ethan6188/deepagents/issues/6876)) ([8b8e70a](https://github.com/ethan6188/deepagents/commit/8b8e70a1c5858e44cc4b8e7c499265c90a8c5786))
+* **sdk:** hand the agent's backend to middleware that ask for it ([#7668](https://github.com/ethan6188/deepagents/issues/7668)) ([d9c2af4](https://github.com/ethan6188/deepagents/commit/d9c2af40ea4ab8729e4a9a0fc4f70070b000ff47))
+* **sdk:** queue async subagent follow-ups without interrupting active work ([#7082](https://github.com/ethan6188/deepagents/issues/7082)) ([a7e1e25](https://github.com/ethan6188/deepagents/commit/a7e1e2575c1e96b721a0a3e0ecde6e85612ac30d))
+* **sdk:** raise on model refusals by default and report subagent refusals to the parent ([#7512](https://github.com/ethan6188/deepagents/issues/7512)) ([0fd438a](https://github.com/ethan6188/deepagents/commit/0fd438a4b952efcc13a4f599d2d7699dd6966f2d))
+* **sdk:** record the `task` call id on subagent checkpoints ([#7509](https://github.com/ethan6188/deepagents/issues/7509)) ([213f034](https://github.com/ethan6188/deepagents/commit/213f0345fbd2dc1b09b9595028df9cc8682cc270))
+* **sdk:** record the subagent's checkpoint namespace on the `task` tool message ([#7580](https://github.com/ethan6188/deepagents/issues/7580)) ([7eee174](https://github.com/ethan6188/deepagents/commit/7eee17462177b7079940587523af01f315edfd46))
+
+
+### Bug Fixes
+
+* **sdk:** accommodate routes without trailing slash in CompositeBackend ([#7028](https://github.com/ethan6188/deepagents/issues/7028)) ([0ce837b](https://github.com/ethan6188/deepagents/commit/0ce837bf69ff0efb10c2fa100039cc0c78a74a11))
+* **sdk:** anchor summarization cutoff by message id ([#7567](https://github.com/ethan6188/deepagents/issues/7567)) ([de0bef7](https://github.com/ethan6188/deepagents/commit/de0bef7770a3e30a3a7fea2f333ef68a2e85ef28))
+* **sdk:** cache optional prompt caching provider lookups ([#7585](https://github.com/ethan6188/deepagents/issues/7585)) ([4a51d63](https://github.com/ethan6188/deepagents/commit/4a51d6370b9eb1085376897e905136866cf5cb94))
+* **sdk:** clip long `grep` lines to a window around the match ([#7526](https://github.com/ethan6188/deepagents/issues/7526)) ([98ff834](https://github.com/ethan6188/deepagents/commit/98ff83427cd8dbda3fd51c1f7135217bf2544491))
+* **sdk:** drop reasoning blocks bound to history a summary replaced ([#7127](https://github.com/ethan6188/deepagents/issues/7127)) ([6032a5a](https://github.com/ethan6188/deepagents/commit/6032a5ade4908d75eb2662e602f1f61a1d7a9bcf))
+* **sdk:** drop results from ls, grep, glob when a symlink resolves outside approved search scope ([#7706](https://github.com/ethan6188/deepagents/issues/7706)) ([ba7d8a0](https://github.com/ethan6188/deepagents/commit/ba7d8a06abcb9481af1f4fa10c54495fa168eac3))
+* **sdk:** enforce `LocalShellBackend` output limits in UTF-8 bytes ([#7074](https://github.com/ethan6188/deepagents/issues/7074)) ([953d5dd](https://github.com/ethan6188/deepagents/commit/953d5dda8bd866663f49dfa0659a87c3f2cf0c26))
+* **sdk:** keep forked subagents on the parent's prompt-cache prefix ([#7628](https://github.com/ethan6188/deepagents/issues/7628)) ([e3cb6bb](https://github.com/ethan6188/deepagents/commit/e3cb6bb097c1b5e2654e23a236c83ca0c17edea8))
+* **sdk:** make `ContextHubBackend.glob` honor `path` ([#6998](https://github.com/ethan6188/deepagents/issues/6998)) ([dd6706d](https://github.com/ethan6188/deepagents/commit/dd6706d3007b4a077985b38bbc0d4a792c7016bc))
+* **sdk:** mark read_file media and Nemotron nudges as harness notifications ([#7589](https://github.com/ethan6188/deepagents/issues/7589)) ([eb81f68](https://github.com/ethan6188/deepagents/commit/eb81f68ca932217c9e3430b48dc047732e800d29))
+* **sdk:** omit async task IDs from user replies by default ([#7174](https://github.com/ethan6188/deepagents/issues/7174)) ([a551c88](https://github.com/ethan6188/deepagents/commit/a551c88389e390454e8363a4f1b74d41fd6b8c80))
+* **sdk:** preserve filesystem permissions in middleware overrides ([#7166](https://github.com/ethan6188/deepagents/issues/7166)) ([6ae83f4](https://github.com/ethan6188/deepagents/commit/6ae83f4bc3ac444a6555f3cdd3878c4559fe5b81))
+* **sdk:** preserve symlink names in virtual filesystem results ([#7618](https://github.com/ethan6188/deepagents/issues/7618)) ([2a4c5fa](https://github.com/ethan6188/deepagents/commit/2a4c5faeb580ce6db1e560017846545b144a7e26))
+* **sdk:** promote rubric middleware out of beta ([#7368](https://github.com/ethan6188/deepagents/issues/7368)) ([98773a7](https://github.com/ethan6188/deepagents/commit/98773a73843421f85a2113e6c3b0262f53d9bcd6))
+* **sdk:** reject text edits of binary files ([#7069](https://github.com/ethan6188/deepagents/issues/7069)) ([7a70d6e](https://github.com/ethan6188/deepagents/commit/7a70d6e0e55ec818a454f071ff99295e5c12eab9))
+* **sdk:** report async subagent runs cancelled on the server, and drop reasoning from check results ([#7060](https://github.com/ethan6188/deepagents/issues/7060)) ([ac8d8e9](https://github.com/ethan6188/deepagents/commit/ac8d8e942a46bbc8e1f078fcb6b8d6393534abe2))
+* **sdk:** report failed compaction with error status ([#7538](https://github.com/ethan6188/deepagents/issues/7538)) ([2c11c92](https://github.com/ethan6188/deepagents/commit/2c11c92ee2f47e4ce62e7e6510a77b0f2ad6b638))
+* **sdk:** restrict Python grep fallback to the requested file ([#7539](https://github.com/ethan6188/deepagents/issues/7539)) ([3a0c7bb](https://github.com/ethan6188/deepagents/commit/3a0c7bb935fefb5d283f0799ef4551add6c2a361))
+* **sdk:** retry an async subagent check when its thread can't be read ([#7124](https://github.com/ethan6188/deepagents/issues/7124)) ([d57b09b](https://github.com/ethan6188/deepagents/commit/d57b09b1a7a9890fee2db649e6418416f039df14))
+* **sdk:** skip binary files in in-memory `grep` ([#7032](https://github.com/ethan6188/deepagents/issues/7032)) ([97f856d](https://github.com/ethan6188/deepagents/commit/97f856dcb08264ef78722a4687cab9133ec5fb7a))
+* **sdk:** stop `FilesystemBackend.download_files` hanging on a FIFO ([#7663](https://github.com/ethan6188/deepagents/issues/7663)) ([b493490](https://github.com/ethan6188/deepagents/commit/b493490a1793955b6c3bae4651fd1a531ee49b1a))
+* **sdk:** store NUL-containing uploads as base64 in StoreBackend ([#7710](https://github.com/ethan6188/deepagents/issues/7710)) ([e1c7735](https://github.com/ethan6188/deepagents/commit/e1c7735f1044519db63d9ab511bf881a0a8efddc))
+* **sdk:** stream async subagent runs to apps that join them ([#7722](https://github.com/ethan6188/deepagents/issues/7722)) ([62e422a](https://github.com/ethan6188/deepagents/commit/62e422a0dda11d0da4449d7e252f1fca31eccefa))
+
+
+### Performance Improvements
+
+* **sdk:** stop importing `langchain_anthropic` at import time ([#7204](https://github.com/ethan6188/deepagents/issues/7204)) ([492a184](https://github.com/ethan6188/deepagents/commit/492a184c5fc07364edaae464dd0bdc4e49af3e9e))
+* **sdk:** stop importing `langchain_openai` at import time ([#7185](https://github.com/ethan6188/deepagents/issues/7185)) ([1fe9631](https://github.com/ethan6188/deepagents/commit/1fe963145de49dd62af807bff1b0e96f24c9ae07))
+
 ## [0.7.38](https://github.com/langchain-ai/deepagents/compare/deepagents==0.7.37...deepagents==0.7.38) (2026-11-13)
 
 ### Bug Fixes
